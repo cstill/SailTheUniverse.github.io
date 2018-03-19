@@ -1,0 +1,369 @@
+/* ------------------------------------------------------------------
+    General Application Styles
+/* ------------------------------------------------------------------
+
+/*** main HEADER styles ***/
+/* make header size and image right */
+#header_full {
+  margin: 40px;
+  margin-bottom: 10px;
+}
+
+#header_full #main-header .img-responsive {
+  position: relative;
+  z-index: 99;
+}
+
+#main-header {
+  display:flex;align-items:center;font-size:36px;height:75px;color:#000;background-color:#FFC107;border-radius: 10px 10px 0px 0px !important;
+}
+
+/*** main NAVIGATION bar and menu styles ***/
+.menu-padding {
+    padding-top:75px !important;
+}
+
+.navbar,
+.navbar ul,
+.navbar-nav > li > a {
+  background-image: none;
+  background-color: #D32F2f !important;
+  color: #fff !important;
+  border-style: none !important;
+  border-radius: 0px 0px 10px 10px !important;
+}
+
+.navbar-nav > li > a:hover {
+  background-image: none !important;
+  background-color: #B71C1C !important;
+  color: #fff !important;
+  border-style: none !important;
+  border-radius: 0px 0px 0px 0px !important;
+}
+
+.navbar-nav li.divider,
+.navbar-toggle .icon-bar  {
+  background-image: none;
+  background-color: #fff;
+  border-style: none !important;
+}
+
+/*** loading image used to entertain during AJAX requests ***/
+.loaderImage {
+  margin: 0px; 
+  padding: 0px; 
+  position: fixed; 
+  right: 0px; 
+  top: 0px; 
+  width: 100%; 
+  height: 100%; 
+  background-color: rgb(102, 102, 102); 
+  z-index: 30001; 
+  opacity: 0.8;
+  display: none;
+}
+.loaderImage > div {
+  position:absolute; top:50%; left:50%; margin-left: -75px; margin-top: -75px;
+}
+
+
+/* ------------------------------------------------------------------
+    Page Specific Styles
+/* ------------------------------------------------------------------
+
+/*** INDEX/DASHBOARD styles ***/
+#dashboard-container { margin-left: 40px; margin-right: 40px; padding:0; }
+
+/*** MATCHES styles ***/
+#matches-container { margin-left: 40px; margin-right: 40px; padding:0; }
+
+#matches table { margin:0; }
+#matches > tbody > tr > td { padding: 0; }
+.matches-alliance-blue { background-color:#2295C7 !important; width: 100%; }
+.matches-alliance-blue td, .matches-alliance-red td { width: 33%; }
+.matches-alliance-red { background-color:#D44829 !important; width: 100%; }
+.matches-winning-alliance, .matches-winning-alliance a { font-weight: bold; color:yellow; }
+
+/*** SCOUTING-REPORTs ***/
+.ps-scouting-report input[type='checkbox'] { transform: scale(1.4, 1.4); }
+
+/*** MATCH INTEL styles ***/
+.ps-match-intel-team { padding-bottom: 10px; }
+.ps-match-intel-team td { padding:3px; }
+.ps-match-intel-team .match-intel-rating-val { width: 140px; }
+
+.ps-match-intel-score-section { background-color: #171c23; }
+
+
+/* ------------------------------------------------------------------
+    3rd party component overrides ***/
+/* ------------------------------------------------------------------
+
+/*** datatables styles ***/
+.dataTable.fixedHeader-floating {
+  background-color: #2E3338 !important;
+}
+
+.dataTable th,
+.dataTable td {
+    white-space: nowrap;
+}
+
+.table.DTFC_Cloned  {background-color: #2E3338; }
+.table.DTFC_Cloned tr { background-color: inherit !important; }
+.table.DTFC_Cloned tr.odd { background-color: #353a41 !important; }
+
+/* tell datatables to use font awesome icons */
+.dataTables_scrollHeadInner table.dataTable thead th {
+    position: relative;
+    background-image: none !important;
+}
+
+.DTFC_LeftHeadWrapper table.dataTable thead th.sorting:after,
+.DTFC_LeftHeadWrapper table.dataTable thead th.sorting_asc:after,
+.DTFC_LeftHeadWrapper table.dataTable thead th.sorting_desc:after,
+.dataTables_scrollHeadInner table.dataTable thead th.sorting:after,
+.dataTables_scrollHeadInner table.dataTable thead th.sorting_asc:after,
+.dataTables_scrollHeadInner table.dataTable thead th.sorting_desc:after {
+    position: absolute;
+    top: 12px;
+    right: 8px;
+    display: block;
+    font-family: FontAwesome;
+}
+
+.DTFC_LeftHeadWrapper table.dataTable thead th.sorting:after,
+.dataTables_scrollHeadInner table.dataTable thead th.sorting:after {
+    content: "\f175\f176";
+    color: #ddd;
+    width: 14px;
+    height: 16px;
+}
+
+.DTFC_LeftHeadWrapper table.dataTable thead th.sorting_asc:after,
+.dataTables_scrollHeadInner table.dataTable thead th.sorting_asc:after {
+    content: "\f160";
+}
+
+.DTFC_LeftHeadWrapper table.dataTable thead th.sorting_desc:after,
+.dataTables_scrollHeadInner table.dataTable thead th.sorting_desc:after {
+    content: "\f161";
+}
+
+/*** login ui (via bootsnips) styles ***/
+@media (min-width: 768px) {
+  .omb_row-sm-offset-3 div:first-child[class*="col-"] { margin-left: 25%; }
+  .omb_login .omb_forgotPwd { text-align: right; margin-top:10px; }
+}
+
+.omb_login .omb_authTitle {
+    text-align: center;
+  line-height: 300%;
+}
+
+.omb_login .omb_socialButtons a {
+  color: white; In yourUse @body-bg
+  opacity: 0.9;
+}
+.omb_login .omb_socialButtons a:hover {
+  color: white;
+  opacity:0.9;
+}
+.omb_login .omb_socialButtons .omb_btn-facebook {background: #3b5998;}
+.omb_login .omb_socialButtons .omb_btn-twitter {background: #00aced;}
+.omb_login .omb_socialButtons .omb_btn-google {background: #c32f10;}
+.omb_login .omb_socialButtons .omb_btn-github {background: #fff; color: #000; }
+
+.omb_login .omb_loginOr {
+  position: relative;
+  font-size: 1.5em;
+  color: #aaa;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+.omb_login .omb_loginOr .omb_hrOr {
+  background-color: #cdcdcd;
+  height: 1px;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+.omb_login .omb_loginOr .omb_spanOr {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: -0.6em;
+  margin-left: -1.5em;
+  background-color: #222222;
+  width: 3em;
+  text-align: center;
+}
+
+.omb_login .omb_loginForm .input-group.i {
+  width: 2em;
+}
+.omb_login .omb_loginForm  .help-block {
+    color: red;
+}
+
+/*** circular buttons (via bootsnips) styles ***/
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.428571429;
+  border-radius: 15px;
+}
+  
+  .btn-circle.btn:focus {
+    outline:0;
+  }
+  
+  .btn-circle.green {
+    background-image: none; background-color: green;
+  }
+  
+  .btn-circle.red {
+    background-image: none; background-color: red;
+  }
+    
+  .btn-circle.btn-lg {
+    width: 50px;
+    height: 50px;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.33;
+    border-radius: 25px;
+  }
+  .btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    font-size: 24px;
+    line-height: 1.33;
+    border-radius: 35px;
+  }
+
+
+/* ------------------------------------------------------------------
+    Responsive CSS styles
+/* ------------------------------------------------------------------
+
+/* media based styles for any elements that need adjusting when screen is < 992px */
+@media (max-width: 991px) {
+  #main-header {font-size: 22px;}
+}
+
+@media (max-width: 1500px) {
+  #main-header {border-radius: 0px 0px 0px 0px !important;}
+  #header_full {margin:0px;}
+  #header_full #main-header .img-responsive { position: static; z-index: 1; }
+  
+  #dashboard-container, #matches-container { margin-left: auto; margin-right: auto; padding:inherit; }
+  
+  .navbar,
+  .navbar ul,
+  .navbar-nav > li > a {border-radius: 0px 0px 0px 0px !important;}
+}
+
+/* Footer */
+
+.footer-distributed{
+	background-color: #292c2f;
+	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+	box-sizing: border-box;
+	width: 100%;
+	text-align: left;
+	font: normal 16px sans-serif;
+
+	padding: 45px 50px;
+	margin-top: 80px;
+}
+
+.footer-distributed .footer-left p{
+	color:  #8f9296;
+	font-size: 14px;
+	margin: 0;
+}
+
+/* Footer */
+
+.footer-distributed p.footer-links{
+	font-size:18px;
+	font-weight: bold;
+	color:  #ffffff;
+	margin: 0 0 2px;
+	padding: 0;
+}
+
+.footer-distributed p.footer-links a{
+	display:inline-block;
+	line-height: 1.8;
+	text-decoration: none;
+	color:  inherit;
+}
+
+.footer-distributed .footer-right{
+	float: right;
+	margin-top: 6px;
+	max-width: 180px;
+}
+
+.footer-distributed .footer-right a{
+	display: inline-block;
+	width: 35px;
+	height: 35px;
+	background-color:  #33383b;
+	border-radius: 2px;
+
+	font-size: 20px;
+	color: #ffffff;
+	text-align: center;
+	line-height: 35px;
+
+	margin-left: 3px;
+}
+
+.divider-hor {
+	height: 6px;
+	background: url(http://ibrahimjabbari.com/english/images/hr-11.png) repeat-x 0 0;
+    border: 0;
+}
+
+/*** RESPONSIVE CSS ***/
+
+/*
+  media based styles for any elements that need adjusting when screen is < 992px
+**/
+@media (max-width: 991px) {
+    #main-header {font-size: 22px;}
+    #carousel-home2 .item{
+        height: inherit;
+    }
+
+    #carousel-home2 .item img {
+        position: relative;
+        min-height: 100px;
+    }
+    .footer-distributed {
+		.footer-left {
+			text-align: center;
+			p.footer-links {
+				line-height: 1.8;
+			}
+		}
+		.footer-right {
+			text-align: center;
+			float: none;
+			margin: 0 auto 20px;
+		}
+  }
+}
+
+.scouting-report {
+    text-align: center;
+    font-size: 25px;
+}

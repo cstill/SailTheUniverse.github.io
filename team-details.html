@@ -1,0 +1,316 @@
+---
+layout: page
+title: View Team Details
+permalink: /team-details/
+---
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <form id="reportForm" class="form-horizontal">
+        <fieldset>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <div class="col-md-4">
+                  <select id="teams" name="team_id" class="form-control">
+                    <option value="-99">- Select a team -</option>
+                  </select>
+                  <a id="details-link" style="color:#ccc;font-weight:bold;font-size:18px;float:right;display:none;" href="#"><i class="fa fa-files-o"> View Scouting Reports for this team</i></a>
+                </div>
+                <div class="col-md-8 panel panel-default" style="margin:0;">
+                  <div id="summary_team_details" class="panel-body" style="padding:8px;">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div id="scores-viz" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px;">
+            <div class="col-md-12">
+              <div id="scouting-viz" style="min-width: 310px; height: 350px; margin: 0 auto"></div>
+            </div>
+          </div>
+
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  $(function () {
+    // ------------------------------------------------------------------------
+    // selecting a team to view
+    // ------------------------------------------------------------------------
+
+    // fetch team data
+    $("#teams").change("click", function (ev) {
+      // determine report to fetch
+      var selectedVal = this.value;
+
+      // if selecting the placeholder, just return
+      if (selectedVal === '-99') return;
+
+      $('details-link').hide();
+
+      // fetch scoring data
+      ParadoxScout.onTeamScoreAdded(null, selectedVal, 'value', function (teamScoresSnapshot) {
+        // if nothing returned
+        if (!teamScoresSnapshot.exists()) return;
+
+        $('#details-link').attr('href', '{{ site.baseurl }}/scouting-reports?team_id=' + selectedVal);
+        $('#details-link').show();
+
+        var team = teamScoresSnapshot.val();
+        var data = team.scores;
+
+        //$.getJSON("{{ site.baseurl }}/test-data/sample-event-scores-by-team.json", function(data) {
+        // add  match_key to each match score object and add to array
+        var scores = $.map(data, function (v, k) {
+          v.match_key = k
+          return v;
+        });
+
+        // sort scores by match time asc
+        scores.sort(function (a, b) {
+          return parseFloat(a.match_time) - parseFloat(b.match_time);
+        });
+
+        var matchKeys = [];
+        var scoringData = {};
+        var scoringDataCumulative = {}
+
+        // build scoring viz (using app_team_details_config)
+        $.each(scores, function (index, s) {
+          // add timeKey to x-axis array
+          matchKeys.push(s.match_key);
+
+          //add score aggregation to y-axis array
+          $.each(s, function (k, v) {
+            var category = app_team_details_config.scoring_viz.find(function (el) { return el.id === k });
+            if (!category) return;
+
+            if (!(k in scoringData)) {
+              var isVisibleByDefault = category.visible || false;
+
+              scoringData[k] = { name: (category.title || k), data: [], display_order: category.display_order, visible: isVisibleByDefault };
+              scoringDataCumulative[k] = { name: (category.title || k), data: [], display_order: category.display_order };
+            }
+
+            // show average over time
+            var currentSum = scoringDataCumulative[k].data[scoringDataCumulative[k].data.length - 1] || 0
+            scoringDataCumulative[k].data.push(currentSum + v);
+            scoringData[k].data.push(Math.round((currentSum + v) / (index + 1) * 100) / 100);
+
+            // fyi - to instead show data accumulation over time
+            // scoringData[k].data.push(currentSum + v);
+          })
+        });
+
+        // prepare serries array
+        var series = $.map(scoringData, function (v, k) { return v; });
+        series.sort(function (a, b) {
+          return parseFloat(a.display_order) - parseFloat(b.display_order);
+        });
+
+        // console.log(matchKeys);
+        // console.log(scoringData);
+        // console.log(series);
+
+        // update chart
+        scoresVizOptions.xAxis.categories = matchKeys;
+        scoresVizOptions.series = series;
+        var chart = new Highcharts.Chart(scoresVizOptions);
+
+        // summarize key metrics: get point averages
+        var view_pointsPerMatch = scoringDataCumulative.totalPoints.data[scoringDataCumulative.totalPoints.data.length - 1] / scores.length;
+
+        // build summary panel using app_team_details_config
+        app_team_details_config.summary_panel.forEach(function (el) {
+          // any element prefaced with 'view_' refers to a aggregated variable created *inside* the view
+          var val = el.id.startsWith('view_') ? eval(el.id.toString()) : team[el.id];
+          // round decimals if necessary
+          if (el.decimal_places) val = val.toFixed(el.decimal_places)
+          // update summary field that was dynamically created onLoad
+          $('#team-summary-' + el.id).text(val);
+        });
+      });
+
+      // fetch scouting data
+      ParadoxScout.getScoutingReports(null, selectedVal, 'value', function (teamReportsSnapshot) {
+        // if nothing returned
+        if (!teamReportsSnapshot) return;
+
+        var data = teamReportsSnapshot.val();
+
+        // get scouting data for selected team
+        //$.getJSON("{{ site.baseurl }}/test-data/sample-scouting-reports-by-team.json", function(data) {
+        var categories = app_team_details_config.scouting_viz.map(function (el) { return el.title || el.id }); // ['High Goals', 'Low Goals, ..., 'Crossings']
+        var missedData = Array.apply(null, { length: categories.length }).map(function () { return 0; });  // [0,0,0,0,0,0,0,0,0,0,0,0];
+        var madeData = Array.apply(null, { length: categories.length }).map(function () { return 0; });  // [0,0,0,0,0,0,0,0,0,0,0,0];
+        var categoryRateCounts = Array.apply(null, { length: categories.length }).map(function () { return 0; });  // [0,0,0,0,0,0,0,0,0,0,0,0];
+        var categoryCalcType = Array.apply(null, { length: categories.length }).map(function () { return 0; });  // [0,0,0,0,0,0,0,0,0,0,0,0];
+
+        // iterate over each report, adding scouting scores to previous scores
+        $.each(data, function (rptKey, r) {
+          // add each scouting category to viz using app_team_details_config
+          app_team_details_config.scouting_viz.forEach(function (el, idx) {
+            categoryRateCounts[idx] += (r[el.id] || r[el.missed_id]) ? 1 : 0;
+            categoryCalcType[idx] = el.calc_type || 'total';
+            madeData[idx] += parseFloat(r[el.id]) || 0;
+            missedData[idx] += parseFloat(r[el.missed_id]) || 0;
+          });
+        });
+
+        madeData.forEach(function(el, idx) {
+          if (categoryCalcType[idx] == 'avg') {
+            madeData[idx] = +((madeData[idx] / categoryRateCounts[idx]).toFixed(2));
+          }
+        });
+
+        var series =  [{ name: app_team_details_config.scouting_viz_series.made_title, data: madeData }, { name: app_team_details_config.scouting_viz_series.missed_title, data: missedData }];
+
+        scoutingVizOptions.xAxis.categories = categories;
+        scoutingVizOptions.series = series;
+        var chart = new Highcharts.Chart(scoutingVizOptions);
+      });
+    });
+
+    // ------------------------------------------------------------------------
+    // onload
+    // ------------------------------------------------------------------------
+
+    // 1. build the summary details html placeholders
+    var summaryDataHtml = []
+
+    app_team_details_config.summary_panel.forEach(function (el) {
+      // add the summary attributes
+      summaryDataHtml.push(`
+      <h4 class="pull-left" style="margin:0px 15px 5px 0px;" ${ el.tooltip ? 'data-toggle="tooltip" data-placement="top" title="' + el.tooltip + '"' : ''}>
+        ${ el.title}: 
+        <span id="team-summary-${ el.id.trim()}" class="label label-default"></span>
+      </h4>`)
+    });
+    // append summary attributes html
+    $('#summary_team_details').append(summaryDataHtml.join('\n'));
+
+    // build bootstrap tooltips
+    $('[data-toggle="tooltip"]').tooltip()
+
+    // 2. configure scoring visualization
+    var scoresVizOptions = {
+      chart: {
+        renderTo: 'scores-viz', type: 'line', zoomType: 'xy'
+      },
+      title: {
+        text: 'Scoring Trend Analysis', x: -20 //center
+      },
+      xAxis: {
+        categories: [],
+        labels: {
+          formatter: function () {
+            var matchName = this.value.substring(this.value.indexOf('_') + 1);
+            return matchName;
+          }
+        }
+      },
+      yAxis: {
+        title: { text: 'Score' },
+        // min: 0,
+        // max: 125,
+        plotLines: [{ value: 0, width: 1, color: '#808080' }]
+      },
+      legend: {
+        //layout: 'vertical',
+        align: 'left',
+        verticalAlign: 'bottom',
+        borderWidth: 0,
+        x: 0,
+        y: 0,
+        labelFormatter: function () { return this.name.replace('rating_', '').replace(/_/g, ' '); }
+      },
+      plotOptions: {
+        series: { connectNulls: true }
+      },
+      tooltip: {
+        formatter: function () { return this.series.name.replace('rating_', '').replace(/_/g, ' ') + ': ' + this.y; }
+      },
+      series: []
+    };
+
+    // 3. configure scouting reports visualization
+    var scoutingVizOptions = {
+      chart: {
+        renderTo: 'scouting-viz', type: 'column'
+      },
+      title: {
+        text: 'Scouting Report Scoring Analysis'
+      },
+      xAxis: {
+        categories: []
+      },
+      yAxis: {
+        title: { text: 'Counts' },
+        min: 0,
+        stackLabels: {
+          enabled: true,
+          style: {
+            fontWeight: 'bold',
+            color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+          }
+        }
+      },
+      legend: {
+        align: 'right',
+        x: -30,
+        verticalAlign: 'top',
+        y: 25,
+        floating: true,
+        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+        borderColor: '#CCC',
+        borderWidth: 1,
+        shadow: false
+      },
+      tooltip: {
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{point.y}' //'{series.name}: <br/>Total: {point.stackTotal}'
+      },
+      plotOptions: {
+        column: {
+          stacking: 'normal',
+          dataLabels: {
+            enabled: false, //true,
+            color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+          }
+        }
+      },
+      series: []
+    };
+
+    // 4. build teams dropdown
+    $('.loaderImage').show();
+    ParadoxScout.buildTeamsDropdown($('#teams'), null, function (error) {
+      $('.loaderImage').hide();
+
+      if (error) {
+        AppUtility.showErrorMsg("An error occurred!", error);
+      }
+      else {
+        // if a team key is included in querystring, select that team
+        var selectedTeamKey = AppUtility.getUrlParameter('team_id');
+        if (selectedTeamKey && $("#teams option[value='" + selectedTeamKey + "']").length > 0) {
+          $('#teams').val(selectedTeamKey);
+          $('#teams').change();
+        }
+      }
+    });
+
+  });
+
+</script>

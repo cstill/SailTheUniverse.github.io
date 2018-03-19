@@ -1,0 +1,52 @@
+### Welcome to Paradox-Scout Jekyll! ###
+########################################
+# There is a bit of configuring before you can get up and running with Paradox-Scout
+
+### Base Site settings ###
+##########################
+
+title: DEMBOTS Scout # site title, also used in the navbar
+email: coopjproulx@gmail.com
+description: "A First Robotics Scouting Application built by Team Paradox 2102" # site description
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://github.com/SailTheUniverse/roborecon-app" # the base hostname & protocol for your site
+
+
+### Header Settings ###
+#######################
+# Customise to how you want
+header:
+    title: Team DEM BOTS 3453 # the bold, bigger main text
+    accent: 2018 Scouting System # the smaller, but informative accenting text
+    logo: "/images/DEMBOTS.png" # FULL path to image in the header 150x150 works well
+
+### Footer Settings ###
+#######################
+# Customise to how you want
+footer:
+    facebook: "https://www.facebook.com/DEMbots/"
+    twitter: "https://twitter.com/team3453"
+    github: "https://github.com/team3453/" 
+
+
+### Scouting System Settings ###
+################################
+# These are the most imporant settings, choose carefully
+
+scout:
+    teamkey: 3453
+    tbaApiKey: EiqeEwh72NxEJSx0D4du2eInubgeKRw8uYlfIcWuPOIyZTI39bsbHL7SUkYZMn2h
+    currentevent: 2018week6 # the Event key for the event you want to scout, can be found on TBA
+    firebase:
+        rooturl: https://paradox-scout-dc256.firebaseio.com/ # Address of Firebase Server
+        apikey: AIzaSyDleJPx9RQChKn4DlLV9nXqMNafP7BvhG0 # API Key of Firebase
+        authdomain: paradox-scout-dc256.firebaseapp.com # Domain for Firebase to Connect to
+        databaseurl: https://paradox-scout-dc256.firebaseio.com # Domain for Firebase Database to Connect to
+        storagebucket: paradox-scout-dc256.appspot.com # Domain for Firebase Storage Bucket to Connect to
+        messagingsenderid: 777517430963 # ID for message sender
+
+### Other Jekyll###
+###################
+# You should never have to change these.
+encoding: utf-8
+exclude: [vendor]
